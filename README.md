@@ -2,9 +2,10 @@
 
 Librerías de Ayuda (APIs) para integrar la pasarela de pago (TPV Virtual) Redsys en tiendas web virtuales que hayan sido desarrolladas bajo ASP Clásico, teniendo en cuenta el cambio del uso del algoritmo SHA1 por 3DES y HMAC-SHA256, que son más robustos (Ver https://canales.redsys.es/canales/ayuda/migracionSHA256.html)
 
-## Proyectos utilizados
 
-Este API es un portado de las clases `RedSys` y `RedSysWs` implementadas en las API PHP que proporciona RedSys en su página http://www.redsys.es/wps/portal/redsys/publica/areadeserviciosweb/descargaDeDocumentacionYEjecutables. Leer detenidamente [las condiciones de uso de RedSys](Aviso+Legal+-+Condiciones+de+uso (RedSys).pdf).
+Este API es un portado de las clases `RedSys` y `RedSysWs` implementadas en las API PHP que proporciona RedSys en su página http://www.redsys.es/wps/portal/redsys/publica/areadeserviciosweb/descargaDeDocumentacionYEjecutables. Leer detenidamente [las condiciones de uso de RedSys](Aviso.Legal.-.Condiciones.de.uso.RedSys.pdf).
+
+## Dependencias
 
 Para la implementación de las funciones HMAC-SHA256, 3DES y el manejo de los encoding Utf8, Base64 y Hex hemos utilizado la librería javascript https://github.com/brix/crypto-js de Evan Vosberg y Jeff Mott (@brix), para la que hemos creado librerías ASP que facilitan el acceso desde ASP Clásico en lenguaje VBScript ([dvim_brix_crypto-js-master_VB.asp](dvim_brix_crypto-js-master_VB.asp) o [dvim_brix_crypto-js-develop_VB.asp](dvim_brix_crypto-js-develop_VB.asp) según se utilize el branch [master](https://github.com/brix/crypto-js/tree/master) o [develop](https://github.com/brix/crypto-js/tree/develop) de https://github.com/brix/crypto-js. Esta librería está bajo licencia [MIT](http://opensource.org/licenses/MIT).
 
