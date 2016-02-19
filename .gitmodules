@@ -1,0 +1,9 @@
+[submodule "include/douglascrockford_JSON-js"]
+	path = include/douglascrockford_JSON-js
+	url = https://github.com/douglascrockford/JSON-js
+[submodule "include/brix_crypto-js-master-3.1.6"]
+	path = include/brix_crypto-js-master-3.1.6
+	url = https://github.com/brix/crypto-js
+[submodule "include/brix_crypto-js-develop-3.1.6"]
+	path = include/brix_crypto-js-develop-3.1.6
+	url = https://github.com/brix/crypto-js
