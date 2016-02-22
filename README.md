@@ -3,7 +3,7 @@
 Librerías de Ayuda (APIs) para integrar la pasarela de pago (TPV Virtual) Redsys en tiendas web virtuales que hayan sido desarrolladas bajo ASP Clásico, teniendo en cuenta el cambio del uso del algoritmo SHA1 por 3DES y HMAC-SHA256, que son más robustos (Ver https://canales.redsys.es/canales/ayuda/migracionSHA256.html)
 
 
-Este API es un portado de las clases `RedSys` y `RedSysWs` implementadas en las API PHP que proporciona RedSys en su página http://www.redsys.es/wps/portal/redsys/publica/areadeserviciosweb/descargaDeDocumentacionYEjecutables. Por favor leer detenidamente las condiciones de uso de RedSys que podéis encontar en el enlace anterior, clicando en "Ver condiciones de uso" (no hay elnace directo).
+Este API es un portado de las clases `RedSys` y `RedSysWs` implementadas en las API PHP que proporciona RedSys en su página http://www.redsys.es/wps/portal/redsys/publica/areadeserviciosweb/descargaDeDocumentacionYEjecutables. Por favor leer detenidamente las condiciones de uso de RedSys que podéis encontar en el enlace anterior, clicando en "Ver condiciones de uso" (no hay enlace directo).
 
 ## Dependencias
 
