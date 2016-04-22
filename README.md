@@ -1,4 +1,4 @@
-# redsysHMAC256_API_ASP
+# redsysHMAC256_API_ASP ![Analytics](https://ga-beacon.appspot.com/UA-47703369-4/redsysHMAC256_API_ASP?pixel)
 
 Librerías de Ayuda (APIs) para integrar la pasarela de pago (TPV Virtual) Redsys en tiendas web virtuales que hayan sido desarrolladas bajo ASP Clásico, teniendo en cuenta el cambio del uso del algoritmo SHA1 por 3DES y HMAC-SHA256, que son más robustos (Ver https://canales.redsys.es/canales/ayuda/migracionSHA256.html)
 
