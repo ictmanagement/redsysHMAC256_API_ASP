@@ -40,7 +40,7 @@
 				res = "KO"
 			End If
 			Dim numPedido
-			numPedido = miObj.getParameter("Ds_Order")
+			numPedido = miObj.getParameter("Order")
 			Dim resp 
 			resp = "<Response Ds_Version=""0.0""><Ds_Response_Merchant>" & res & "</Ds_Response_Merchant></Response>"
 			Dim sign
