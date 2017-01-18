@@ -1,4 +1,4 @@
-<%@ language="vbscript" codepage="65001"%>
+Ôªø<%@ language="vbscript" codepage="65001"%>
 <script language="vbscript" runat="server">
 '
 '	Copyright (c) 2016, DE VEGA ICT MANAGEMENT, SLU, CIF B66216300
@@ -34,7 +34,7 @@
 			firma = miObj.createMerchantSignatureNotifSOAPRequest(kc,sInput)
 			Dim res
 			If (firma = signatureRecibida) Then 
-				'AquÌ deberÌais verificar los par·metros recibidos, pe miObj.getParameter("Ds_Card_Country"), miObj.getParameter("Ds_Response"), etc
+				'Aqu√≠ deber√≠ais verificar los par√°metros recibidos, pe miObj.getParameter("Ds_Card_Country"), miObj.getParameter("Ds_Response"), etc
 				res = "OK"
 			Else
 				res = "KO"
@@ -50,7 +50,7 @@
 		End If
 	End Sub
 
-	'FunciÛn b·sica para generar el envoltorio SOAP al mensaje de respuesta
+	'Funci√≥n b√°sica para generar el envoltorio SOAP al mensaje de respuesta
 	Function generateSOAPEnvelope(strReturn)
 		generateSOAPEnvelope = "" & _
 "<soapenv:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:inot=""InotificacionSIS"">" & _

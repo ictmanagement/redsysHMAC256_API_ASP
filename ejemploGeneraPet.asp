@@ -47,8 +47,7 @@
 	version="HMAC_SHA256_V1"
 	kc = "Mk9m98IfEblmPfrpsawt7BmxObt98Jev" 'Clave recuperada de CANALES
 	' Se generan los parámetros de la petición
-	Dim request,params,signature
-	request = ""
+	Dim params,signature
 	params = miObj.createMerchantParameters()
 	signature = miObj.createMerchantSignature(kc)
 
