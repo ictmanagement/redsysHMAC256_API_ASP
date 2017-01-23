@@ -66,8 +66,11 @@
 				Set ConvertUtf8StrToWordArray = Nothing
 			End if
 		End Function
-		'recibe (Utf8)String|WordArray y retorna (Utf8)String
-		Private Function ConvertToUtf8String(data)
+		'recibe (Utf8)String|WordArray|Byte() y retorna (Utf8)String
+		Public Function ConvertToUtf8String(data)
+			If TypeName(data) = "Byte()" Then
+				Set data = CryptoJS.enc.Hex.parse(ByteArrayToHexString(data))
+			End If
 			If (typename(data) = "String") Then
 				ConvertToUtf8String = CryptoJS.enc.Utf8.parse(data).toString(CryptoJS.enc.Utf8)
 			Elseif (typename(data) = "JScriptTypeInfo") Then
@@ -217,12 +220,7 @@
 		End Function
 		Public Function getSignatureNotifSOAP(datos)
 			Dim datosStr
-			'Se verifica si es ByteArray, String o WordArray
-			If TypeName(datos) = "Byte()" Then
-				datosStr = ConvertToUtf8String(CryptoJS.enc.Hex.parse(ByteArrayToHexString(datos)))
-			Else 'String o WordArray
-				datosStr = ConvertToUtf8String(datos)
-			End If
+			datosStr = ConvertToUtf8String(datos)
 			Dim posSignatureIni, tamSignatureIni, posSignatureFin
 			posSignatureIni = InStr(datosStr, "<Signature>")
 			tamSignatureIni = Len("<Signature>")
@@ -255,18 +253,14 @@
 			'Se codifican los datos Base64
 			createMerchantSignatureNotif = base64_url_encode(resWA)
 		End Function
+
 		'/******  Notificaciones SOAP ENTRADA ******/
 		Public Function createMerchantSignatureNotifSOAPRequest(key, datos)
 			' Se decodifica la clave Base64
 			Dim keyWA
 			Set keyWA = decodeBase64(key)
 			Dim datosStr
-			'Se verifica si es ByteArray, String o WordArray
-			If TypeName(datos) = "Byte()" Then
-				datosStr = ConvertToUtf8String(CryptoJS.enc.Hex.parse(ByteArrayToHexString(datos)))
-			Else 'String o WordArray
-				datosStr = ConvertToUtf8String(datos)
-			End If
+			datosStr = ConvertToUtf8String(datos)
 			' Se obtienen los datos del Request
 			Dim datosReq
 			datosReq = getRequestNotifSOAP(datosStr)
@@ -286,12 +280,7 @@
 			Dim keyWA
 			Set keyWA = decodeBase64(key)
 			Dim datosStr
-			'Se verifica si es ByteArray, String o WordArray
-			If TypeName(datos) = "Byte()" Then
-				datosStr = ConvertToUtf8String(CryptoJS.enc.Hex.parse(ByteArrayToHexString(datos)))
-			Else 'String o WordArray
-				datosStr = ConvertToUtf8String(datos)
-			End If
+			datosStr = ConvertToUtf8String(datos)
 			' Se obtienen los datos del Response
 			Dim datosRes
 			datosRes = getResponseNotifSOAP(datosStr)

@@ -20,47 +20,100 @@
 	Dim reqSize, content
 	reqSize=Request.TotalBytes
 	content = Request.BinaryRead(reqSize)
-	call procesaNotificacionSIS(content,sOut)
-	Response.Write generateSOAPEnvelope(sOut)
 
-	Sub procesaNotificacionSIS(ByVal sInput, ByRef sOutput)
-		If (Len(sInput)>0) Then'//URL DE RESP. ONLINE
-			' Se crea Objeto
-			Set miObj = new RedsysAPI
+	Dim sSOAPOut
+	sSOAPOut = procesaNotificacionSIS(content)
+	Response.Write sSOAPOut
+
+	' notificacionSIS_request es Byte() con el NotificacionSIS SOAP Request
+	' devuelve strNotificacionSIS_response (utf8)String'
+	Function procesaNotificacionSIS(ByVal notificacionSIS)
+		' Se crea Objeto
+		Dim miObj
+		Set miObj = new RedsysAPI
+		' Obtenemos el String UTF8 del notificacionSIS
+		Dim strInput
+		strInput = miObj.ConvertToUtf8String(notificacionSIS)
+		If (Len(strInput)>0) Then
+			' Extraemos el SOAP envelope
+			Dim xmlMessage
+			xmlMessage = extractSOAPEnvelope(strInput)
 			Dim signatureRecibida
-			signatureRecibida = miObj.getSignatureNotifSOAP(sInput)
+			signatureRecibida = miObj.getSignatureNotifSOAP(xmlMessage)
 			Dim kc, firma
 			kc = "Mk9m98IfEblmPfrpsawt7BmxObt98Jev" 'Clave recuperada de CANALES
-			firma = miObj.createMerchantSignatureNotifSOAPRequest(kc,sInput)
+			firma = miObj.createMerchantSignatureNotifSOAPRequest(kc,xmlMessage) 'TODO: encodedMessage o de xmlMessage ?'
 			Dim res
+			res = "KO"
 			If (firma = signatureRecibida) Then 
-				'Aquí deberíais verificar los parámetros recibidos, pe miObj.getParameter("Ds_Card_Country"), miObj.getParameter("Ds_Response"), etc
+				'Aquí deberíais verificar los parámetros recibidos, pe 
+				'Ds_Card_Country -> miObj.getParameter("Card_Country"), 
+				'Ds_Response -> miObj.getParameter("Response"), 
+				'Ds_AuthorisationCode -> miObj.getParameter("AuthorisationCode"), etc.
 				res = "OK"
-			Else
-				res = "KO"
 			End If
 			Dim numPedido
-			numPedido = miObj.getParameter("Order")
-			Dim resp 
-			resp = "<Response Ds_Version=""0.0""><Ds_Response_Merchant>" & res & "</Ds_Response_Merchant></Response>"
-			Dim sign
-			sign = miObj.createMerchantSignatureNotifSOAPResponse(kc,resp,numPedido)
-			sign = "<Signature>" & sign & "</Signature>"
-			sOutput = "<Message>" & resp & sign & "</Message>"
+			numPedido = miObj.getParameter("Order") 'Ds_Order
+			Dim xmlResp 
+			xmlResp = "<Response Ds_Version='0.0'><Ds_Response_Merchant>" & res & "</Ds_Response_Merchant></Response>"
+			Dim xmlSign
+			xmlSign = "<Signature>" & miObj.createMerchantSignatureNotifSOAPResponse(kc,xmlResp,numPedido) & "</Signature>"
+			Dim xmlMessageResponse
+			xmlMessageResponse = "<Message>" & xmlResp & xmlSign & "</Message>"
+			procesaNotificacionSIS=generateSOAPEnvelope(xmlMessageResponse)
+		Else
+			'TODO: generar el SOAP error correspondiente
+			procesaNotificacionSIS=generateSOAPEnvelope("")
 		End If
-	End Sub
+	End Function
 
 	'Función básica para generar el envoltorio SOAP al mensaje de respuesta
-	Function generateSOAPEnvelope(strReturn)
+	Function generateSOAPEnvelope(xmlMessageResponse)
+		Dim encodedMessage
+		encodedMessage = XML1_encode (xmlMessageResponse)
 		generateSOAPEnvelope = "" & _
 "<soapenv:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:inot=""InotificacionSIS"">" & _
 "<soapenv:Header/>" & _
 "<soapenv:Body>" & _
 "<inot:procesaNotificacionSISResponse soapenv:encodingStyle=""http://schemas.xmlsoap.org/soap/encoding/"">" & _
-"<return xsi:type=""xsd:string"">" & strReturn & "</return>" & _
+"<return xsi:type=""xsd:string"">" & encodedMessage & "</return>" & _
 "</inot:procesaNotificacionSISResponse>" & _
 "</soapenv:Body>" & _
 "</soapenv:Envelope>"
 	End Function
 
+		'Función básica para eliminar el envoltorio SOAP al mensaje de solicitud
+	Function extractSOAPEnvelope(strSOAPRequest)
+		Dim posXMLIni, posXMLFin, posXMLIniEnd, encodedXMLContent
+		posXMLIni = InStr(strSOAPRequest, "<XML")
+		posXMLFin = InStr(strSOAPRequest, "</XML>")
+		encodedXMLContent = Mid(strSOAPRequest,posXMLIni,posXMLFin-posXMLIni)
+		posXMLIniEnd = InStr(encodedXMLContent, ">")
+		encodedXMLContent = Mid(encodedXMLContent, posXMLIniEnd+1)
+		extractSOAPEnvelope = XML1_decode(encodedXMLContent)
+	End Function
+	
+	Function XML1_decode(encodedXML)
+		Dim decodedXML
+		decodedXML=encodedXML
+		'Tabla corresponsdiente a PHP get_html_translation_table(HTML_ENTITIES, ENT_QUOTES | ENT_XML1)
+		decodedXML=Replace(decodedXML,"&quot;","""")
+		decodedXML=Replace(decodedXML,"&apos;","'")
+		decodedXML=Replace(decodedXML,"&lt;","<")
+		decodedXML=Replace(decodedXML,"&gt;",">")
+		decodedXML=Replace(decodedXML,"&amp;","&")
+		XML1_decode = decodedXML
+	End Function
+	Function XML1_encode(decodedXML)
+		Dim encodedXML
+		encodedXML=decodedXML
+		'Tabla corresponsdiente a PHP get_html_translation_table(HTML_ENTITIES, ENT_QUOTES | ENT_XML1)
+		encodedXML=Replace(encodedXML,"&","&amp;")
+		encodedXML=Replace(encodedXML,"""","&quot;")
+		encodedXML=Replace(encodedXML,"'","&apos;")
+		encodedXML=Replace(encodedXML,"<","&lt;")
+		encodedXML=Replace(encodedXML,">","&gt;")
+		XML1_encode = encodedXML
+	End Function
+	
 %>
